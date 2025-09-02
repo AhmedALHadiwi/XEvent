@@ -27,8 +27,8 @@ const App = () => (
           <Route path="/events" element={<Events />} />
           <Route path="/events/:id" element={<EventDetails />} />
           <Route path="/tickets" element={<Placeholder title="Booking & Tickets" />} />
-          <Route path="/attendee-insights" element={<Placeholder title="Attendee Insights" />} />
-          <Route path="/analytics" element={<Placeholder title="Analytics & Reports" />} />
+          <Route path="/attendee-insights" element={<AttendeeInsights />} />
+          <Route path="/analytics" element={<Analytics />} />
           <Route path="/support" element={<Placeholder title="Contact Support" />} />
           <Route path="/notifications" element={<Placeholder title="Notifications" />} />
           <Route path="/settings" element={<Placeholder title="Settings" />} />
