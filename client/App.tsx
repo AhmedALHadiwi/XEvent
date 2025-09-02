@@ -11,6 +11,8 @@ import NotFound from "./pages/NotFound";
 import Placeholder from "./pages/Placeholder";
 import Events from "./pages/Events";
 import EventDetails from "./pages/EventDetails";
+import AttendeeInsights from "./pages/AttendeeInsights";
+import Analytics from "./pages/Analytics";
 
 const queryClient = new QueryClient();
 
