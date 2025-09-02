@@ -22,7 +22,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/events" element={<Placeholder title="Manage Events" />} />
+          <Route path="/events" element={<Events />} />
+          <Route path="/events/:id" element={<EventDetails />} />
           <Route path="/tickets" element={<Placeholder title="Booking & Tickets" />} />
           <Route path="/attendee-insights" element={<Placeholder title="Attendee Insights" />} />
           <Route path="/analytics" element={<Placeholder title="Analytics & Reports" />} />
