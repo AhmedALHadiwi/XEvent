@@ -6,6 +6,7 @@ type User = { id: string; email: string; name: string; role: string } | null;
 type AuthCtx = {
   user: User;
   loading: boolean;
+  isAdmin: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
@@ -16,6 +17,7 @@ const Ctx = createContext<AuthCtx | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User>(null);
   const [loading, setLoading] = useState(true);
+  const isAdmin = user?.role === "admin";
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -45,7 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   };
 
-  return <Ctx.Provider value={{ user, loading, login, register, logout }}>{children}</Ctx.Provider>;
+  return <Ctx.Provider value={{ user, loading, isAdmin, login, register, logout }}>{children}</Ctx.Provider>;
 }
 
 export function useAuth() {

@@ -17,6 +17,7 @@ import Tickets from "./pages/Tickets";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { AuthProvider } from "@/hooks/useAuth";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -29,19 +30,19 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/events" element={<Events />} />
-          <Route path="/events/:id" element={<EventDetails />} />
-          <Route path="/tickets" element={<Tickets />} />
+          <Route path="/events" element={<ProtectedRoute requireAdmin><Events /></ProtectedRoute>} />
+          <Route path="/events/:id" element={<ProtectedRoute requireAdmin><EventDetails /></ProtectedRoute>} />
+          <Route path="/tickets" element={<ProtectedRoute><Tickets /></ProtectedRoute>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/attendee-insights" element={<AttendeeInsights />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/support" element={<Placeholder title="Contact Support" />} />
-          <Route path="/notifications" element={<Placeholder title="Notifications" />} />
-          <Route path="/settings" element={<Placeholder title="Settings" />} />
-          <Route path="/marketing" element={<Placeholder title="Marketing" />} />
-          <Route path="/categories" element={<Placeholder title="Event Categories" />} />
-          <Route path="/users" element={<Placeholder title="Manage Users" />} />
+          <Route path="/attendee-insights" element={<ProtectedRoute requireAdmin><AttendeeInsights /></ProtectedRoute>} />
+          <Route path="/analytics" element={<ProtectedRoute requireAdmin><Analytics /></ProtectedRoute>} />
+          <Route path="/support" element={<ProtectedRoute><Placeholder title="Contact Support" /></ProtectedRoute>} />
+          <Route path="/notifications" element={<ProtectedRoute><Placeholder title="Notifications" /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><Placeholder title="Settings" /></ProtectedRoute>} />
+          <Route path="/marketing" element={<ProtectedRoute requireAdmin><Placeholder title="Marketing" /></ProtectedRoute>} />
+          <Route path="/categories" element={<ProtectedRoute requireAdmin><Placeholder title="Event Categories" /></ProtectedRoute>} />
+          <Route path="/users" element={<ProtectedRoute requireAdmin><Placeholder title="Manage Users" /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
