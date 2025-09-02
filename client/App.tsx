@@ -13,6 +13,9 @@ import Events from "./pages/Events";
 import EventDetails from "./pages/EventDetails";
 import AttendeeInsights from "./pages/AttendeeInsights";
 import Analytics from "./pages/Analytics";
+import Tickets from "./pages/Tickets";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import { AuthProvider } from "@/hooks/useAuth";
 
 const queryClient = new QueryClient();
