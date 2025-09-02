@@ -1,9 +1,39 @@
 import Layout from "@/components/eventx/Layout";
+import { useAuth } from "@/hooks/useAuth";
+import { Navigate, Link } from "react-router-dom";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell } from "recharts";
 
 const COLORS = ["#3b82f6", "#f59e0b", "#22c55e", "#ef4444", "#a855f7", "#06b6d4", "#000000", "#94a3b8"];
 
 export default function AttendeeInsights() {
+  const { user, isAdmin, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted/30">
+        <div className="bg-card rounded-xl p-8 border shadow-sm text-center max-w-md">
+          <h2 className="text-xl font-semibold mb-2 text-destructive">Admin Access Required</h2>
+          <p className="text-muted-foreground mb-4">You need administrator privileges to view attendee insights.</p>
+          <Link to="/" className="px-4 py-2 bg-brand text-white rounded-lg hover:brightness-95 transition">
+            Back to Dashboard
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   const locations = [
     { name: "Colombo", value: 853 },
     { name: "Kandy", value: 743 },

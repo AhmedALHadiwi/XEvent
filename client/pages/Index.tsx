@@ -1,10 +1,26 @@
 import Layout from "@/components/eventx/Layout";
+import { useAuth } from "@/hooks/useAuth";
+import { Navigate } from "react-router-dom";
 import StatCard from "@/components/eventx/StatCard";
 import { NetSalesChart, EngagementDonut, SeatGrid, LocationsBar } from "@/components/eventx/widgets";
 import { UpcomingEvents, Notifications } from "@/components/eventx/lists";
 import { CalendarDays, Ticket, DollarSign } from "lucide-react";
 
 export default function Index() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
     <Layout>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">

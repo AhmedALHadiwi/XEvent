@@ -1,52 +1,246 @@
-import Layout from "@/components/eventx/Layout";
-import { Link } from "react-router-dom";
-import { Filter, Search, CalendarDays, Clock, MapPin, ChevronRight } from "lucide-react";
+import { NavLink } from "react-router-dom";
+import { CalendarPlus, LayoutDashboard, Ticket, Users, BarChart3, Bell, Settings, Megaphone, Tags, LogOut, HelpCircle } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
-const data = [
-  { id: "colombo-music-festival", title: "Colombo Music Festival", price: 5000, venue: "Open Air Theater, Colombo", date: "12 April 2025", time: "9.00PM - 11.30PM" },
-  { id: "lanka-supercar", title: "Lanka Supercar Show", price: 3000, venue: "Open Air Theater, Colombo", date: "15 April 2025", time: "9.00PM - 11.30PM" },
-  { id: "rock-roll-night", title: "Rock & Roll Night", price: 3000, venue: "Open Air Theater, Colombo", date: "03 March 2025", time: "6.00PM - 10.30PM" },
-  { id: "galle-literary", title: "Galle Literary Fair", price: 2000, venue: "Open Air Theater, Galle", date: "10 April 2025", time: "9.00AM - 12.00PM" },
-  { id: "art-exhibition", title: "Kandy Art Exhibition", price: 4000, venue: "Open Air Theater, Kandy", date: "21 April 2025", time: "9.00PM - 11.30PM" },
-  { id: "sri-lanka-food", title: "Sri Lanka Food Fest", price: 2000, venue: "Open Air Theater, Colombo", date: "02 March 2025", time: "7.00PM - 11.30PM" },
+const navItems = [
+  { to: "/", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/events", label: "Manage Events", icon: CalendarPlus, adminOnly: true },
+  { to: "/tickets", label: "Booking & Tickets", icon: Ticket, adminOnly: false },
+  { to: "/attendee-insights", label: "Attendee Insights", icon: Users, adminOnly: true },
+  { to: "/analytics", label: "Analytics & Reports", icon: BarChart3, adminOnly: true },
 ];
 
-function Card({ e }: { e: typeof data[number] }) {
+const supportItems = [
+  { to: "/support", label: "Contact Support", icon: HelpCircle, adminOnly: false },
+  { to: "/notifications", label: "Notifications", icon: Bell, adminOnly: false },
+  { to: "/settings", label: "Settings", icon: Settings, adminOnly: false },
+];
+
+const extraItems = [
+  { to: "/marketing", label: "Marketing", icon: Megaphone, adminOnly: true },
+  { to: "/categories", label: "Event Categories", icon: Tags, adminOnly: true },
+];
+
+const accountItems = [
+  { to: "/users", label: "Manage Users", icon: Users, adminOnly: true },
+];
+
+export default function Sidebar() {
+  const { user, isAdmin, logout } = useAuth();
+
+  if (!user) return null;
+
   return (
-    <div className="bg-card rounded-xl p-4 border shadow-sm flex flex-col gap-3">
-      <div className="font-semibold text-lg">{e.title}</div>
-      <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
-        <div className="flex items-center gap-2"><span className="h-5 w-5 rounded bg-emerald-100 text-emerald-700 grid place-items-center text-xs">LKR</span><span>{e.price.toLocaleString()} LKR</span></div>
-        <div className="flex items-center gap-2"><CalendarDays className="h-4 w-4" /><span>{e.date}</span></div>
-        <div className="flex items-center gap-2 col-span-2"><MapPin className="h-4 w-4" /><span>{e.venue}</span></div>
-        <div className="flex items-center gap-2"><Clock className="h-4 w-4" /><span>{e.time}</span></div>
+    <aside className="hidden md:flex md:flex-col w-72 shrink-0 h-screen sticky top-0 bg-sidebar text-sidebar-foreground border-r border-sidebar-border p-4 gap-4">
+      <div className="flex items-center gap-2 px-2">
+        <div className="h-9 w-9 rounded-xl bg-brand text-white grid place-items-center font-bold">EX</div>
+        <div className="leading-tight">
+          <div className="font-extrabold text-lg">EventX</div>
+          <div className="text-xs opacity-70">Studio</div>
+        </div>
       </div>
-      <Link to={`/events/${e.id}`} className="ml-auto inline-flex items-center gap-1 text-sm font-medium px-3 py-1.5 border rounded-lg hover:bg-muted">
-        View <ChevronRight className="h-4 w-4" />
-      </Link>
+
+      {showCreateForm && (
+        <div className="bg-card rounded-xl p-6 border shadow-sm mb-4">
+          <h3 className="font-semibold text-lg mb-4">{editingEvent ? "Edit Event" : "Create New Event"}</h3>
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-medium">Event Title</label>
+              <input 
+                className="w-full rounded-lg border px-3 py-2 mt-1"
+                value={formData.title}
+                onChange={(e) => setFormData({...formData, title: e.target.value})}
+                required
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Date</label>
+              <input 
+                type="date"
+                className="w-full rounded-lg border px-3 py-2 mt-1"
+                value={formData.date}
+                onChange={(e) => setFormData({...formData, date: e.target.value})}
+                required
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Venue</label>
+              <input 
+                className="w-full rounded-lg border px-3 py-2 mt-1"
+                value={formData.venue}
+                onChange={(e) => setFormData({...formData, venue: e.target.value})}
+                required
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Price (LKR)</label>
+              <input 
+                type="number"
+                className="w-full rounded-lg border px-3 py-2 mt-1"
+                value={formData.price}
+                onChange={(e) => setFormData({...formData, price: e.target.value})}
+                required
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Total Seats</label>
+              <input 
+                type="number"
+                className="w-full rounded-lg border px-3 py-2 mt-1"
+                value={formData.totalSeats}
+                onChange={(e) => setFormData({...formData, totalSeats: e.target.value})}
+                required
+              />
+            </div>
+            <div className="flex items-end gap-2">
+              <button type="submit" className="rounded-lg bg-brand text-white px-4 py-2 font-medium">
+                {editingEvent ? "Update Event" : "Create Event"}
+              </button>
+              <button 
+                type="button" 
+                onClick={() => {
+                  setShowCreateForm(false);
+                  setEditingEvent(null);
+                }}
+                className="rounded-lg border px-4 py-2 font-medium"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {isAdmin && (
+        <button className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-brand text-white hover:brightness-95 transition">
+          <CalendarPlus className="h-4 w-4" />
+          <span>Add Quick Event</span>
+        </button>
+      )}
+
+      <NavSection title="Main Navigation" items={navItems} isAdmin={isAdmin} />
+      <NavSection title="Support & Management" items={supportItems} isAdmin={isAdmin} />
+      {isAdmin && <NavSection title="Additional Features" items={extraItems} isAdmin={isAdmin} />}
+      {isAdmin && <NavSection title="Account Management" items={accountItems} isAdmin={isAdmin} />}
+
+      <div className="mt-auto">
+        <button 
+          onClick={logout}
+          className="flex items-center gap-3 px-3 py-2 rounded-lg transition hover:bg-sidebar-accent text-sidebar-foreground w-full text-left"
+        >
+          <LogOut className="h-4 w-4" />
+          <span className="text-sm">Logout</span>
+        </button>
+        <div className="mt-2 px-3 py-2 text-xs text-muted-foreground">
+          Logged in as: {user.name} ({user.role})
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+function NavSection({ title, items, isAdmin }: { title: string; items: { to: string; label: string; icon: any; adminOnly: boolean }[]; isAdmin: boolean }) {
+  const filteredItems = items.filter(item => !item.adminOnly || isAdmin);
+  
+  if (filteredItems.length === 0) return null;
+
+  return (
+        });
+      } else {
+        await api("/api/events", {
+          method: "POST",
+          body: { ...formData, price: Number(formData.price), totalSeats: Number(formData.totalSeats) }
+        });
+      }
+      setFormData({ title: "", date: "", venue: "", price: "", totalSeats: "" });
+      setShowCreateForm(false);
+      setEditingEvent(null);
+      loadEvents();
+    } catch (error) {
+      console.error("Failed to save event:", error);
+    }
+  };
+
+  const handleEdit = (event: any) => {
+    setEditingEvent(event);
+    setFormData({
+      title: event.title,
+      date: new Date(event.date).toISOString().split('T')[0],
+      venue: event.venue,
+      price: String(event.price),
+      totalSeats: String(event.totalSeats)
+    });
+    setShowCreateForm(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this event?")) return;
+    try {
+      await api(`/api/events/${id}`, { method: "DELETE" });
+      loadEvents();
+    } catch (error) {
+      console.error("Failed to delete event:", error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted/30">
+        <div className="bg-card rounded-xl p-8 border shadow-sm text-center max-w-md">
+          <h2 className="text-xl font-semibold mb-2 text-destructive">Admin Access Required</h2>
+          <p className="text-muted-foreground mb-4">You need administrator privileges to manage events.</p>
+          <Link to="/" className="px-4 py-2 bg-brand text-white rounded-lg hover:brightness-95 transition">
+            Back to Dashboard
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+    <div className="space-y-2">
+      <div className="text-xs uppercase tracking-wider text-muted-foreground/80 px-2">{title}</div>
+      <div className="flex flex-col">
+        {events.map((e) => (
+          <Card key={e.id || e._id} e={e} onEdit={handleEdit} onDelete={handleDelete} />
+        ))}
+      </div>
     </div>
   );
 }
 
-export default function Events() {
+function NavRow({ to, label, icon: Icon }: { to: string; label: string; icon: any }) {
   return (
-    <Layout>
-      <div className="bg-card rounded-xl p-4 border shadow-sm mb-4 flex flex-wrap items-center gap-2 justify-between">
-        <div className="font-semibold text-lg">Event Management Section</div>
-        <div className="flex items-center gap-2">
-          <button className="inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm"><Filter className="h-4 w-4" /> Filter</button>
-          <div className="hidden sm:flex items-center gap-2 rounded-full border px-3 py-1.5 bg-white">
-            <Search className="h-4 w-4 text-muted-foreground" />
-            <input className="w-56 outline-none text-sm placeholder:text-muted-foreground" placeholder="Search events..." />
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {data.map((e) => (
-          <Card key={e.id} e={e} />
-        ))}
-      </div>
-    </Layout>
+    <NavLink
+      to={to}
+      className={({ isActive }) =>
+        `flex items-center gap-3 px-3 py-2 rounded-lg transition hover:bg-sidebar-accent ${isActive ? "bg-sidebar-accent text-sidebar-primary" : "text-sidebar-foreground"}`
+          <button 
+            onClick={() => {
+              setEditingEvent(null);
+              setFormData({ title: "", date: "", venue: "", price: "", totalSeats: "" });
+              setShowCreateForm(true);
+            }}
+            className="inline-flex items-center gap-2 rounded-lg bg-brand text-white px-3 py-2 text-sm font-medium"
+          >
+            Create Event
+          </button>
+      }
+      end
+    >
+      <Icon className="h-4 w-4" />
+      <span className="text-sm">{label}</span>
+    </NavLink>
   );
 }

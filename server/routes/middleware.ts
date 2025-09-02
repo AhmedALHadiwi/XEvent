@@ -13,3 +13,11 @@ export const requireAuth: RequestHandler = (req, res, next) => {
     return res.status(401).json({ error: "Invalid token" });
   }
 };
+
+export const requireAdmin: RequestHandler = (req, res, next) => {
+  const user = (req as any).user;
+  if (!user || user.role !== "admin") {
+    return res.status(403).json({ error: "Admin access required" });
+  }
+  next();
+};
